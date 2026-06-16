@@ -1,0 +1,320 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-primary-bg-light;
+  padding-bottom: 160rpx;
+}
+
+.header {
+  background: $color-bg-card;
+  padding: $spacing-lg $page-padding $spacing-md;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+.pageTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.tabBar {
+  display: flex;
+  gap: $spacing-sm;
+  overflow-x: auto;
+}
+
+.tabItem {
+  padding: 12rpx 28rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  background: $color-bg-tag;
+  white-space: nowrap;
+  transition: all $transition-fast;
+  flex-shrink: 0;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.tabItemActive {
+  background: $color-primary;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.content {
+  padding: $spacing-md $page-padding;
+}
+
+.reminderList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.reminderCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+}
+
+.reminderHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  margin-bottom: $spacing-sm;
+}
+
+.reminderIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+
+.iconMedicine {
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.iconVisit {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.iconLab {
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.iconTemporary {
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.reminderInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.reminderTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.reminderTime {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: 6rpx;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.timeText {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.repeatTag {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  padding: 2rpx 10rpx;
+  background: $color-bg-tag;
+  border-radius: $radius-xs;
+}
+
+.reminderDesc {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-top: $spacing-sm;
+  @include text-ellipsis-multi(2);
+}
+
+.reminderFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.shareInfo {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.shareIcon {
+  font-size: 24rpx;
+}
+
+.switch {
+  width: 88rpx;
+  height: 48rpx;
+  border-radius: 24rpx;
+  background: #e5e7eb;
+  position: relative;
+  transition: all $transition-base;
+  flex-shrink: 0;
+}
+
+.switchOn {
+  background: $color-primary;
+}
+
+.switchDot {
+  position: absolute;
+  top: 4rpx;
+  left: 4rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.15);
+  transition: all $transition-base;
+}
+
+.switchOn .switchDot {
+  left: 44rpx;
+}
+
+.typeBadge {
+  font-size: $font-size-xs;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  margin-right: $spacing-sm;
+}
+
+.badgeMedicine {
+  background: rgba(34, 197, 94, 0.1);
+  color: $color-primary;
+}
+
+.badgeVisit {
+  background: rgba(59, 130, 246, 0.1);
+  color: $color-info;
+}
+
+.badgeLab {
+  background: rgba(139, 92, 246, 0.1);
+  color: $color-health;
+}
+
+.badgeTemporary {
+  background: rgba(245, 158, 11, 0.1);
+  color: $color-warning;
+}
+
+.addBtn {
+  position: fixed;
+  right: $page-padding;
+  bottom: 140rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(34, 197, 94, 0.4);
+  z-index: 100;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+.addIcon {
+  font-size: 48rpx;
+  color: $color-text-white;
+  line-height: 1;
+}
+
+.addText {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+  margin-top: 4rpx;
+}
+
+.shareSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.shareTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.caregiverList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.caregiverItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+}
+
+.caregiverAvatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: $color-primary-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.caregiverInfo {
+  flex: 1;
+}
+
+.caregiverName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.caregiverRelation {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.emptyState {
+  padding: 80rpx 0;
+}

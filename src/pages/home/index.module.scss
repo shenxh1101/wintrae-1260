@@ -1,0 +1,410 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-primary-bg-light;
+  padding-bottom: 120rpx;
+}
+
+.heroSection {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: 48rpx $page-padding 64rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroBgCircle {
+  position: absolute;
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  right: -60rpx;
+  top: -80rpx;
+}
+
+.heroBgCircle2 {
+  position: absolute;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  left: -40rpx;
+  bottom: -60rpx;
+}
+
+.greeting {
+  font-size: $font-size-lg;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 8rpx;
+}
+
+.streakRow {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+}
+
+.streakNumber {
+  font-size: 72rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  line-height: 1;
+}
+
+.streakText {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.heroSub {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 16rpx;
+}
+
+.content {
+  padding: 0 $page-padding;
+  margin-top: -32rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.todayCard {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.cardTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.dateText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.progressRing {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: conic-gradient($color-primary 0deg, $color-primary var(--progress, 0deg), #e5e7eb var(--progress, 0deg));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.progressInner {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: $color-bg-card;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progressText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.progressInfo {
+  flex: 1;
+}
+
+.progressDesc {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  margin-bottom: 8rpx;
+}
+
+.progressCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.doseGroups {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.doseGroup {
+  border-radius: $radius-md;
+  background: $color-bg-tag;
+  padding: $spacing-md;
+}
+
+.doseGroupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.doseTimeLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.timeBadge {
+  padding: 6rpx 16rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.timeMorning {
+  background: rgba(245, 158, 11, 0.15);
+  color: $color-morning;
+}
+
+.timeNoon {
+  background: rgba(59, 130, 246, 0.15);
+  color: $color-noon;
+}
+
+.timeEvening {
+  background: rgba(139, 92, 246, 0.15);
+  color: $color-evening;
+}
+
+.timeNight {
+  background: rgba(31, 41, 55, 0.15);
+  color: $color-night;
+}
+
+.doseTimeText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.doseStatus {
+  font-size: $font-size-xs;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+}
+
+.statusDone {
+  background: rgba(34, 197, 94, 0.1);
+  color: $color-success;
+}
+
+.statusPending {
+  background: rgba(245, 158, 11, 0.1);
+  color: $color-warning;
+}
+
+.doseItems {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.doseItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background: $color-bg-card;
+  border-radius: $radius-sm;
+}
+
+.checkbox {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  border: 3rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all $transition-fast;
+}
+
+.checkboxChecked {
+  background: $color-primary;
+  border-color: $color-primary;
+}
+
+.checkIcon {
+  color: $color-text-white;
+  font-size: 24rpx;
+  font-weight: $font-weight-bold;
+}
+
+.medicineInfo {
+  flex: 1;
+}
+
+.medicineName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  @include text-ellipsis;
+}
+
+.medicineDosage {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.medicineTaken {
+  .medicineName,
+  .medicineDosage {
+    color: $color-text-tertiary;
+    text-decoration: line-through;
+  }
+}
+
+.quickActions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md 0;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  transition: all $transition-fast;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.actionIcon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+}
+
+.iconGreen {
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.iconBlue {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.iconOrange {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.iconPurple {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.actionLabel {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.sectionCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.titleIcon {
+  font-size: $font-size-lg;
+}
+
+.stockWarnList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.stockWarnItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: rgba(245, 158, 11, 0.06);
+  border-radius: $radius-md;
+  border-left: 6rpx solid $color-warning;
+}
+
+.stockWarnInfo {
+  flex: 1;
+}
+
+.stockWarnName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.stockWarnDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.stockWarnBtn {
+  @include button-reset;
+  padding: 0 $spacing-md;
+  height: 56rpx;
+  background: $color-warning;
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+}

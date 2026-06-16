@@ -1,0 +1,178 @@
+@use '@/styles/variables.scss' as *;
+
+.medicineCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.99);
+    box-shadow: $shadow-card-hover;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex: 1;
+}
+
+.name {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  flex: 1;
+  @include text-ellipsis;
+}
+
+.typeTag {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+}
+
+.typePrescription {
+  background: rgba(239, 68, 68, 0.1);
+  color: $color-prescription;
+}
+
+.typeHealth {
+  background: rgba(139, 92, 246, 0.1);
+  color: $color-health;
+}
+
+.typeCommon {
+  background: rgba(34, 197, 94, 0.1);
+  color: $color-primary;
+}
+
+.spec {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.dosesSection {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+  margin-bottom: $spacing-md;
+}
+
+.doseItem {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 16rpx;
+  background: $color-bg-tag;
+  border-radius: $radius-sm;
+}
+
+.doseTime {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  padding: 2rpx 8rpx;
+  border-radius: 4rpx;
+}
+
+.timeMorning {
+  background: rgba(245, 158, 11, 0.15);
+  color: $color-morning;
+}
+
+.timeNoon {
+  background: rgba(59, 130, 246, 0.15);
+  color: $color-noon;
+}
+
+.timeEvening {
+  background: rgba(139, 92, 246, 0.15);
+  color: $color-evening;
+}
+
+.timeNight {
+  background: rgba(31, 41, 55, 0.15);
+  color: $color-night;
+}
+
+.doseAmount {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.stockInfo {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stockLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.stockValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.stockLow {
+  color: $color-error;
+}
+
+.stockUnit {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.stockBar {
+  width: 120rpx;
+  height: 8rpx;
+  background: $color-divider;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.stockBarFill {
+  height: 100%;
+  background: $color-primary;
+  border-radius: 4rpx;
+  transition: width $transition-base;
+}
+
+.stockBarFillLow {
+  background: $color-error;
+}
+
+.actionBtn {
+  @include button-reset;
+  padding: 8rpx 20rpx;
+  font-size: $font-size-sm;
+  color: $color-primary;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: $radius-button;
+  height: 56rpx;
+}

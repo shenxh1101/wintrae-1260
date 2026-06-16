@@ -1,0 +1,251 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-primary-bg-light;
+  padding-bottom: 160rpx;
+}
+
+.header {
+  background: $color-bg-card;
+  padding: $spacing-lg $page-padding $spacing-md;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+.pageTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.filterTabs {
+  display: flex;
+  gap: $spacing-sm;
+  overflow-x: auto;
+}
+
+.filterTab {
+  padding: 12rpx 28rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  background: $color-bg-tag;
+  white-space: nowrap;
+  transition: all $transition-fast;
+  flex-shrink: 0;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.filterTabActive {
+  background: $color-primary;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.filterCount {
+  font-size: $font-size-xs;
+  margin-left: 6rpx;
+  opacity: 0.8;
+}
+
+.content {
+  padding: $spacing-md $page-padding;
+}
+
+.sortRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.sortLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.sortActions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.sortAction {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.sortActionActive {
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.medicineList {
+  display: flex;
+  flex-direction: column;
+}
+
+.addBtn {
+  position: fixed;
+  right: $page-padding;
+  bottom: 140rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(34, 197, 94, 0.4);
+  z-index: 100;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+.addIcon {
+  font-size: 48rpx;
+  color: $color-text-white;
+  line-height: 1;
+}
+
+.addText {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+  margin-top: 4rpx;
+}
+
+.addSheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  border-radius: $radius-xl $radius-xl 0 0;
+  padding: $spacing-lg $page-padding 48rpx;
+  z-index: 200;
+  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.1);
+  transform: translateY(100%);
+  transition: transform $transition-base;
+}
+
+.addSheetVisible {
+  transform: translateY(0);
+}
+
+.sheetMask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 199;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $transition-base;
+}
+
+.sheetMaskVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sheetTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+}
+
+.sheetOptions {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.sheetOption {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl $spacing-md;
+  background: $color-bg-tag;
+  border-radius: $radius-lg;
+  transition: all $transition-fast;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.sheetOptionIcon {
+  font-size: 64rpx;
+  margin-bottom: $spacing-sm;
+}
+
+.sheetOptionText {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  margin-bottom: 4rpx;
+}
+
+.sheetOptionDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.cancelBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: $color-bg-tag;
+  color: $color-text-secondary;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+}
+
+.emptyState {
+  padding: 80rpx 0;
+}
+
+.statsBar {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statItem {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  text-align: center;
+  box-shadow: $shadow-card;
+}
+
+.statValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}

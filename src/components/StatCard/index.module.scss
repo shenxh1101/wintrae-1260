@@ -1,0 +1,96 @@
+@use '@/styles/variables.scss' as *;
+
+.statCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  position: relative;
+  overflow: hidden;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.statCardPrimary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+
+  .label, .subText {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .value, .unit {
+    color: $color-text-white;
+  }
+}
+
+.statCardWarning {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+
+  .label, .subText {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .value, .unit {
+    color: $color-text-white;
+  }
+}
+
+.statCardInfo {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+
+  .label, .subText {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .value, .unit {
+    color: $color-text-white;
+  }
+}
+
+.label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.value {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: 1.2;
+}
+
+.unit {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.subText {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.iconBg {
+  position: absolute;
+  right: -20rpx;
+  bottom: -20rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+}
