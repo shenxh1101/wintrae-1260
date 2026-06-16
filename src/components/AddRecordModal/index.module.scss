@@ -1,0 +1,244 @@
+@use '@/styles/variables.scss' as *;
+
+.formGroup {
+  margin-bottom: $spacing-lg;
+}
+
+.formLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  display: block;
+  font-weight: $font-weight-medium;
+}
+
+.formInput {
+  width: 100%;
+  height: 80rpx;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  padding: 0 $spacing-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.input {
+  flex: 1;
+  height: 100%;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  background: transparent;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 120rpx;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  box-sizing: border-box;
+}
+
+.medicinePicker {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  max-height: 320rpx;
+  overflow-y: auto;
+}
+
+.medicineOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  border: 2rpx solid transparent;
+  transition: all $transition-fast;
+}
+
+.medicineOptionActive {
+  background: $color-primary-bg;
+  border-color: $color-primary;
+}
+
+.medicineName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.medicineSpec {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.checkMark {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: transparent;
+  flex-shrink: 0;
+}
+
+.medicineOptionActive .checkMark {
+  background: $color-primary;
+  border-color: $color-primary;
+  color: #fff;
+}
+
+.timeOptions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.timeOption {
+  flex: 1;
+  padding: $spacing-md;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  text-align: center;
+  border: 2rpx solid transparent;
+  transition: all $transition-fast;
+}
+
+.timeOptionActive {
+  background: $color-primary-bg;
+  border-color: $color-primary;
+}
+
+.timeLabel {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  margin-bottom: 4rpx;
+}
+
+.timePoint {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.timeOptionActive .timeLabel {
+  color: $color-primary;
+}
+
+.statusOptions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-sm;
+}
+
+.statusOption {
+  padding: $spacing-md;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  border: 2rpx solid transparent;
+  transition: all $transition-fast;
+}
+
+.statusOptionActive {
+  background: $color-primary-bg;
+  border-color: $color-primary;
+}
+
+.statusIcon {
+  font-size: 32rpx;
+  margin-bottom: 4rpx;
+}
+
+.statusName {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.statusOptionActive .statusName {
+  color: $color-primary;
+}
+
+.reactionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.reactionTag {
+  padding: 10rpx 20rpx;
+  background: $color-bg-tag;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.reactionTagActive {
+  background: rgba(139, 92, 246, 0.15);
+  color: $color-health;
+  font-weight: $font-weight-medium;
+}
+
+.levelOptions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.levelOption {
+  flex: 1;
+  padding: $spacing-sm;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  text-align: center;
+  border: 2rpx solid transparent;
+  transition: all $transition-fast;
+}
+
+.levelOptionActive {
+  border-width: 2rpx;
+}
+
+.levelMild {
+  &.levelOptionActive {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: $color-success;
+  }
+}
+
+.levelModerate {
+  &.levelOptionActive {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: $color-warning;
+  }
+}
+
+.levelSevere {
+  &.levelOptionActive {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: $color-error;
+  }
+}
+
+.levelName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.levelMild .levelName { color: $color-success; }
+.levelModerate .levelName { color: $color-warning; }
+.levelSevere .levelName { color: $color-error; }

@@ -2,24 +2,31 @@ import React, { useState, useMemo } from 'react'
 import { View, Text, ScrollView, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import classnames from 'classnames'
-import { mockMedicines } from '@/data/mockData'
+import { useAppStore } from '@/store/useAppStore'
 import MedicineCard from '@/components/MedicineCard'
 import EmptyState from '@/components/EmptyState'
-import type { Medicine, MedicineType } from '@/types'
+import AddMedicineModal from '@/components/AddMedicineModal'
+import type { Medicine, MedicineType, MedicineRecord, DoseTime } from '@/types'
+import { getTodayStr, formatDate } from '@/utils/date'
 import styles from './index.module.scss'
 
 type FilterType = 'all' | MedicineType
 
 const PlanPage: React.FC = () => {
-  const [medicines, setMedicines] = useState<Medicine[]>(mockMedicines)
+  const medicines = useAppStore(s => s.medicines)
+  const records = useAppStore(s => s.records)
+  const addRecord = useAppStore(s => s.addRecord)
+  const decreaseMedicineStock = useAppStore(s => s.decreaseMedicineStock)
+
   const [filterType, setFilterType] = useState<FilterType>('all')
   const [showAddSheet, setShowAddSheet] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addMode, setAddMode] = useState<'manual' | 'photo'>('manual')
 
   const filteredMedicines = useMemo(() => {
-    if (filterType === 'all') {
-      return medicines
-    }
-    return medicines.filter(m => m.type === filterType)
+    const activeMeds = medicines.filter(m => m.isActive)
+    if (filterType === 'all') return activeMeds
+    return activeMeds.filter(m => m.type === filterType)
   }, [medicines, filterType])
 
   const filterOptions = [
@@ -40,21 +47,12 @@ const PlanPage: React.FC = () => {
     }
   }, [medicines])
 
+  const todayStr = getTodayStr()
+
   const handleAddMedicine = (type: 'manual' | 'photo') => {
     setShowAddSheet(false)
-    if (type === 'photo') {
-      Taro.chooseImage?.({
-        count: 1,
-        success: () => {
-          Taro.showToast({ title: '识别中...', icon: 'loading' })
-          setTimeout(() => {
-            Taro.showToast({ title: '识别成功', icon: 'success' })
-          }, 1500)
-        }
-      })
-    } else {
-      Taro.showToast({ title: '手动添加功能开发中', icon: 'none' })
-    }
+    setAddMode(type)
+    setTimeout(() => setShowAddModal(true), 100)
   }
 
   const handleMedicineClick = (medicine: Medicine) => {
@@ -63,8 +61,37 @@ const PlanPage: React.FC = () => {
   }
 
   const handleCheckIn = (medicine: Medicine) => {
-    console.log('[Plan] 打卡药品:', medicine.name)
-    Taro.showToast({ title: '打卡成功', icon: 'success' })
+    const todayRecs = records.filter(
+      r => r.medicineId === medicine.id && r.date === todayStr
+    )
+
+    if (todayRecs.length >= medicine.doses.length) {
+      Taro.showToast({ title: '今日已全部打卡', icon: 'none' })
+      return
+    }
+
+    const doseOrder: DoseTime[] = ['morning', 'noon', 'evening', 'night']
+    let nextDose = medicine.doses.find(
+      d => !todayRecs.some(r => r.doseTime === d.time)
+    )
+
+    if (!nextDose) {
+      nextDose = medicine.doses[0]
+    }
+
+    addRecord({
+      medicineId: medicine.id,
+      medicineName: medicine.name,
+      date: todayStr,
+      doseTime: nextDose.time,
+      doseTimeLabel: nextDose.timeLabel,
+      status: 'taken',
+      actualTime: formatDate(new Date(), 'HH:mm')
+    })
+
+    decreaseMedicineStock(medicine.id, 1)
+
+    Taro.showToast({ title: `${nextDose.timeLabel}打卡成功`, icon: 'success' })
   }
 
   return (
@@ -85,7 +112,7 @@ const PlanPage: React.FC = () => {
               <Text className={styles.filterCount}>
                 ({opt.key === 'all'
                   ? stats.total
-                  : medicines.filter(m => m.type === opt.key).length})
+                  : medicines.filter(m => m.type === opt.key && m.isActive).length})
               </Text>
             </View>
           ))}
@@ -164,6 +191,12 @@ const PlanPage: React.FC = () => {
           取消
         </Button>
       </View>
+
+      <AddMedicineModal
+        visible={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        mode={addMode}
+      />
     </View>
   )
 }

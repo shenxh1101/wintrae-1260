@@ -1,11 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useMemo } from 'react'
 import { View, Text, Button, ScrollView } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import classnames from 'classnames'
-import { mockMedicines, mockRecords } from '@/data/mockData'
+import { useAppStore } from '@/store/useAppStore'
 import { getTodayStr, formatDate } from '@/utils/date'
 import StatCard from '@/components/StatCard'
-import SectionHeader from '@/components/SectionHeader'
+import WeeklyListModal from '@/components/WeeklyListModal'
+import AddMedicineModal from '@/components/AddMedicineModal'
+import AddRecordModal from '@/components/AddRecordModal'
 import type { Medicine, DoseTime, MedicineRecord } from '@/types'
 import styles from './index.module.scss'
 
@@ -28,20 +30,31 @@ interface DoseGroup {
 }
 
 const HomePage: React.FC = () => {
-  const [todayRecords, setTodayRecords] = useState<MedicineRecord[]>([])
+  const medicines = useAppStore(s => s.medicines)
+  const records = useAppStore(s => s.records)
+  const addRecord = useAppStore(s => s.addRecord)
+  const removeRecord = useAppStore(s => s.removeRecord)
+  const decreaseMedicineStock = useAppStore(s => s.decreaseMedicineStock)
+  const updateMedicine = useAppStore(s => s.updateMedicine)
+  const initStore = useAppStore(s => s.initStore)
+
+  const [showWeeklyList, setShowWeeklyList] = React.useState(false)
+  const [showAddMedicine, setShowAddMedicine] = React.useState(false)
+  const [showAddRecord, setShowAddRecord] = React.useState(false)
+
   const todayStr = getTodayStr()
 
-  useEffect(() => {
-    const todayRecs = mockRecords.filter(r => r.date === todayStr)
-    setTodayRecords(todayRecs)
-  }, [todayStr])
-
   useDidShow(() => {
-    console.log('[Home] 页面显示')
+    initStore()
+    console.log('[Home] 页面显示，记录数:', records.length)
   })
 
+  const todayRecords = useMemo(() => {
+    return records.filter(r => r.date === todayStr)
+  }, [records, todayStr])
+
   const todayDoses = useMemo(() => {
-    const activeMedicines = mockMedicines.filter(m => m.isActive)
+    const activeMedicines = medicines.filter(m => m.isActive)
     const doses: TodayDoseItem[] = []
 
     activeMedicines.forEach(medicine => {
@@ -62,7 +75,7 @@ const HomePage: React.FC = () => {
     })
 
     return doses
-  }, [todayRecords])
+  }, [todayRecords, medicines])
 
   const doseGroups = useMemo((): DoseGroup[] => {
     const timeOrder: DoseTime[] = ['morning', 'noon', 'evening', 'night']
@@ -95,13 +108,45 @@ const HomePage: React.FC = () => {
     return groups
   }, [todayDoses])
 
+  const streakDays = useMemo(() => {
+    let count = 0
+    const dates = new Set(records.filter(r => r.status === 'taken').map(r => r.date))
+    for (let i = 0; i < 365; i++) {
+      const d = new Date()
+      d.setDate(d.getDate() - i)
+      const dateStr = formatDate(d, 'YYYY-MM-DD')
+      if (dates.has(dateStr)) count++
+      else if (i > 0) break
+    }
+    return Math.max(1, count)
+  }, [records])
+
+  const weekRate = useMemo(() => {
+    const today = new Date()
+    let total = 0
+    let taken = 0
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today)
+      d.setDate(today.getDate() - i)
+      const dateStr = formatDate(d, 'YYYY-MM-DD')
+      medicines.filter(m => m.isActive).forEach(m => {
+        m.doses.forEach(() => {
+          total++
+        })
+      })
+      const dayRecs = records.filter(r => r.date === dateStr)
+      taken += dayRecs.filter(r => r.status === 'taken' || r.status === 'delayed').length
+    }
+    return total > 0 ? Math.round((taken / total) * 100) : 0
+  }, [medicines, records])
+
   const stats = useMemo(() => {
     const total = todayDoses.length
     const taken = todayDoses.filter(d => d.isTaken).length
     const progress = total > 0 ? Math.round((taken / total) * 360) : 0
     const percent = total > 0 ? Math.round((taken / total) * 100) : 0
 
-    const lowStockMeds = mockMedicines.filter(
+    const lowStockMeds = medicines.filter(
       m => m.isActive && m.stock <= m.warnStock
     )
 
@@ -110,20 +155,23 @@ const HomePage: React.FC = () => {
       taken,
       progress,
       percent,
-      streak: 15,
-      weekRate: 87,
+      streak: streakDays,
+      weekRate,
       lowStockCount: lowStockMeds.length,
       lowStockMeds
     }
-  }, [todayDoses])
+  }, [todayDoses, medicines, streakDays, weekRate])
 
   const handleToggleDose = (item: TodayDoseItem) => {
-    if (item.isTaken) {
+    if (item.isTaken && item.recordId) {
+      removeRecord(item.recordId)
+      updateMedicine(item.medicine.id, {
+        stock: item.medicine.stock + 1
+      })
       Taro.showToast({ title: '已取消打卡', icon: 'none' })
-      setTodayRecords(prev => prev.filter(r => r.id !== item.recordId))
+      console.log('[Home] 取消打卡:', item.medicine.name, item.timeLabel)
     } else {
-      const newRecord: MedicineRecord = {
-        id: `r_${Date.now()}`,
+      addRecord({
         medicineId: item.medicine.id,
         medicineName: item.medicine.name,
         date: todayStr,
@@ -131,14 +179,30 @@ const HomePage: React.FC = () => {
         doseTimeLabel: item.timeLabel,
         status: 'taken',
         actualTime: formatDate(new Date(), 'HH:mm')
-      }
-      setTodayRecords(prev => [...prev, newRecord])
+      })
+      decreaseMedicineStock(item.medicine.id, 1)
       Taro.showToast({ title: '打卡成功', icon: 'success' })
+      console.log('[Home] 打卡:', item.medicine.name, item.timeLabel)
     }
   }
 
   const handleQuickAction = (action: string) => {
-    Taro.showToast({ title: `${action}功能开发中`, icon: 'none' })
+    switch (action) {
+      case '拍照录入':
+        setShowAddMedicine(true)
+        break
+      case '临时加药':
+        Taro.switchTab?.({ url: '/pages/reminder/index' })
+        break
+      case '服药反应':
+        setShowAddRecord(true)
+        break
+      case '一周清单':
+        setShowWeeklyList(true)
+        break
+      default:
+        Taro.showToast({ title: `${action}功能开发中`, icon: 'none' })
+    }
   }
 
   const handleBuyStock = (medicineName: string) => {
@@ -269,7 +333,7 @@ const HomePage: React.FC = () => {
             label="本周完成率"
             value={stats.weekRate}
             unit="%"
-            subText="较上周提升3%"
+            subText={stats.weekRate >= 80 ? '表现优秀，继续保持！' : '还有提升空间'}
             variant="primary"
             icon="📈"
           />
@@ -313,6 +377,22 @@ const HomePage: React.FC = () => {
           </View>
         )}
       </View>
+
+      <WeeklyListModal
+        visible={showWeeklyList}
+        onClose={() => setShowWeeklyList(false)}
+      />
+
+      <AddMedicineModal
+        visible={showAddMedicine}
+        onClose={() => setShowAddMedicine(false)}
+        mode="photo"
+      />
+
+      <AddRecordModal
+        visible={showAddRecord}
+        onClose={() => setShowAddRecord(false)}
+      />
     </ScrollView>
   )
 }

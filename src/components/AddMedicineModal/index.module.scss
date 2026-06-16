@@ -1,0 +1,237 @@
+@use '@/styles/variables.scss' as *;
+
+.formGroup {
+  margin-bottom: $spacing-lg;
+}
+
+.formLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  display: block;
+  font-weight: $font-weight-medium;
+}
+
+.formInput {
+  width: 100%;
+  height: 80rpx;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  padding: 0 $spacing-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border: 2rpx solid transparent;
+  transition: all $transition-fast;
+}
+
+.formInputFocus {
+  background: $color-bg-card;
+  border-color: $color-primary;
+}
+
+.input {
+  flex: 1;
+  height: 100%;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  background: transparent;
+}
+
+.formRow {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.formCol {
+  flex: 1;
+}
+
+.typeOptions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.typeOption {
+  flex: 1;
+  padding: $spacing-md;
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  text-align: center;
+  border: 2rpx solid transparent;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.typeOptionActive {
+  background: $color-primary-bg;
+  border-color: $color-primary;
+}
+
+.typeOptionName {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  margin-bottom: 4rpx;
+}
+
+.typeOptionDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.typeOptionActive .typeOptionName {
+  color: $color-primary;
+}
+
+.doseSection {
+  background: $color-bg-tag;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.doseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.doseTimeTag {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.timeBadge {
+  padding: 6rpx 16rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.timeMorning {
+  background: rgba(245, 158, 11, 0.15);
+  color: $color-morning;
+}
+
+.timeNoon {
+  background: rgba(59, 130, 246, 0.15);
+  color: $color-noon;
+}
+
+.timeEvening {
+  background: rgba(139, 92, 246, 0.15);
+  color: $color-evening;
+}
+
+.timeNight {
+  background: rgba(31, 41, 55, 0.15);
+  color: $color-night;
+}
+
+.doseSwitch {
+  width: 80rpx;
+  height: 44rpx;
+  border-radius: 22rpx;
+  background: #e5e7eb;
+  position: relative;
+  transition: all $transition-base;
+  flex-shrink: 0;
+}
+
+.doseSwitchOn {
+  background: $color-primary;
+}
+
+.doseSwitchDot {
+  position: absolute;
+  top: 4rpx;
+  left: 4rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.15);
+  transition: all $transition-base;
+}
+
+.doseSwitchOn .doseSwitchDot {
+  left: 40rpx;
+}
+
+.doseInputs {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.doseInput {
+  flex: 1;
+}
+
+.doseInputLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 8rpx;
+}
+
+.photoPreview {
+  width: 100%;
+  height: 280rpx;
+  background: linear-gradient(135deg, $color-primary-bg 0%, $color-primary-bg-light 100%);
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  border: 2rpx dashed $color-primary;
+}
+
+.photoIcon {
+  font-size: 64rpx;
+  opacity: 0.6;
+}
+
+.photoText {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.photoSubText {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.hasPhoto {
+  background: $color-bg-tag;
+  border: none;
+}
+
+.draftHint {
+  padding: $spacing-md;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: $radius-md;
+  border-left: 6rpx solid $color-warning;
+  margin-bottom: $spacing-lg;
+}
+
+.draftHintText {
+  font-size: $font-size-sm;
+  color: $color-warning;
+}
+
+.unitSuffix {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  padding-left: $spacing-sm;
+  flex-shrink: 0;
+}

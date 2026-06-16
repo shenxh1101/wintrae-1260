@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react'
 import { View, Text, ScrollView, Button } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import classnames from 'classnames'
-import { mockRecords } from '@/data/mockData'
+import { useAppStore } from '@/store/useAppStore'
 import CalendarGrid from '@/components/CalendarGrid'
 import EmptyState from '@/components/EmptyState'
+import AddRecordModal from '@/components/AddRecordModal'
 import type { MedicineRecord } from '@/types'
 import { formatDate, getRelativeDateLabel, getTodayStr } from '@/utils/date'
 import styles from './index.module.scss'
@@ -12,20 +13,37 @@ import styles from './index.module.scss'
 type TabType = 'calendar' | 'records' | 'reaction'
 
 const RecordPage: React.FC = () => {
+  const records = useAppStore(s => s.records)
+  const initStore = useAppStore(s => s.initStore)
+
   const [activeTab, setActiveTab] = useState<TabType>('calendar')
-  const [records] = useState<MedicineRecord[]>(mockRecords)
   const [selectedDate, setSelectedDate] = useState<string>(getTodayStr())
+  const [showAddModal, setShowAddModal] = useState(false)
+
+  useDidShow(() => {
+    initStore()
+  })
 
   const stats = useMemo(() => {
+    let streak = 0
+    const dates = new Set(records.filter(r => r.status === 'taken').map(r => r.date))
+    for (let i = 0; i < 365; i++) {
+      const d = new Date()
+      d.setDate(d.getDate() - i)
+      const dateStr = formatDate(d, 'YYYY-MM-DD')
+      if (dates.has(dateStr)) streak++
+      else if (i > 0) break
+    }
+
     const thisMonth = formatDate(new Date(), 'YYYY-MM')
     const monthRecords = records.filter(r => r.date.startsWith(thisMonth))
-    const totalDoses = records.length
-    const takenDoses = records.filter(r => r.status === 'taken').length
+    const totalDoses = monthRecords.length
+    const takenDoses = monthRecords.filter(r => r.status === 'taken' || r.status === 'delayed').length
     const missedDoses = records.filter(r => r.status === 'missed').length
     const rate = totalDoses > 0 ? Math.round((takenDoses / totalDoses) * 100) : 0
 
     return {
-      streak: 15,
+      streak: Math.max(0, streak),
       monthRate: rate,
       missedCount: missedDoses
     }
@@ -45,7 +63,7 @@ const RecordPage: React.FC = () => {
       .map(([date, items]) => ({
         date,
         items,
-        status: items.every(r => r.status === 'taken')
+        status: items.every(r => r.status === 'taken' || r.status === 'delayed')
           ? 'allDone'
           : items.some(r => r.status === 'missed')
             ? 'missed'
@@ -53,24 +71,38 @@ const RecordPage: React.FC = () => {
       }))
   }, [records])
 
-  const reactions = useMemo(() => [
-    {
-      id: 1,
-      date: '2026-06-14',
-      level: 'mild',
-      levelLabel: '轻微',
-      symptoms: ['头晕', '恶心'],
-      description: '早上吃完药后有点头晕，休息半小时后好转。可能是空腹吃药的原因。'
-    },
-    {
-      id: 2,
-      date: '2026-06-10',
-      level: 'moderate',
-      levelLabel: '中度',
-      symptoms: ['胃部不适', '食欲下降'],
-      description: '连续两天感觉胃部不适，食欲不好。咨询医生后建议饭后服药。'
-    }
-  ], [])
+  const reactions = useMemo(() => {
+    const result = records
+      .filter(r => r.reaction)
+      .map(r => {
+        const match = r.reaction!.match(/\[(.+?)\]\s*(.+?)(?:\s*-\s*(.+))?$/)
+        let level = 'mild'
+        let levelLabel = '轻微'
+        let symptoms: string[] = []
+        let desc = ''
+
+        if (match) {
+          levelLabel = match[1]
+          level = levelLabel.includes('严重') ? 'severe' : levelLabel.includes('中') ? 'moderate' : 'mild'
+          const rest = match[2] + (match[3] ? ' - ' + match[3] : '')
+          const parts = rest.split(' - ')
+          symptoms = parts[0].split(/[、,，]/).map(s => s.trim()).filter(Boolean)
+          desc = parts[1] || ''
+        } else {
+          symptoms = [r.reaction!.slice(0, 20)]
+        }
+
+        return {
+          id: r.id,
+          date: r.date,
+          level,
+          levelLabel,
+          symptoms,
+          description: desc || `${r.medicineName} - ${r.doseTimeLabel}`
+        }
+      })
+    return result
+  }, [records])
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -98,7 +130,7 @@ const RecordPage: React.FC = () => {
   }
 
   const handleAddReaction = () => {
-    Taro.showToast({ title: '添加服药反应功能开发中', icon: 'none' })
+    setShowAddModal(true)
   }
 
   return (
@@ -162,7 +194,7 @@ const RecordPage: React.FC = () => {
             >
               {stats.missedCount}
             </Text>
-            <Text className={styles.statLabel}>漏服次数</Text>
+            <Text className={styles.statLabel}>累计漏服</Text>
           </View>
         </View>
 
@@ -174,6 +206,23 @@ const RecordPage: React.FC = () => {
               onSelectDate={handleSelectDate}
               showStatusBar
             />
+            <Button
+              className={styles.addReactionBtn}
+              onClick={handleAddReaction}
+              style={{
+                marginTop: 24,
+                width: '100%',
+                height: 80,
+                background: 'rgba(34,197,94,0.1)',
+                color: '#22c55e',
+                borderRadius: 48,
+                fontWeight: 500,
+                fontSize: 28,
+                border: 'none'
+              }}
+            >
+              + 补录服药记录 / 漏服 / 补服
+            </Button>
           </View>
         )}
 
@@ -184,6 +233,8 @@ const RecordPage: React.FC = () => {
                 icon="📋"
                 text="暂无服药记录"
                 subText="开始服药后，记录将显示在这里"
+                actionText="补录记录"
+                onAction={handleAddReaction}
               />
             ) : (
               groupedRecords.map(group => (
@@ -223,6 +274,7 @@ const RecordPage: React.FC = () => {
                           <Text className={styles.recordName}>{record.medicineName}</Text>
                           <Text className={styles.recordMeta}>
                             {record.doseTimeLabel} · {getStatusText(record.status)}
+                            {record.reaction && ' · 有服药反应'}
                           </Text>
                           {record.reason && (
                             <Text className={styles.recordReason}>原因：{record.reason}</Text>
@@ -242,37 +294,67 @@ const RecordPage: React.FC = () => {
 
         {activeTab === 'reaction' && (
           <View className={styles.reactionSection}>
-            {reactions.map(reaction => (
-              <View key={reaction.id} className={styles.reactionCard}>
-                <View className={styles.reactionHeader}>
-                  <Text className={styles.reactionDate}>{reaction.date}</Text>
-                  <View
-                    className={classnames(
-                      styles.reactionLevel,
-                      reaction.level === 'mild' && styles.levelMild,
-                      reaction.level === 'moderate' && styles.levelModerate,
-                      reaction.level === 'severe' && styles.levelSevere
-                    )}
-                  >
-                    {reaction.levelLabel}
-                  </View>
-                </View>
-                <View className={styles.reactionSymptoms}>
-                  {reaction.symptoms.map((symptom, idx) => (
-                    <View key={idx} className={styles.symptomTag}>
-                      {symptom}
+            {reactions.length === 0 ? (
+              <EmptyState
+                icon="💊"
+                text="暂无服药反应记录"
+                subText="如有身体不适，可在此记录以便就医时告知医生"
+                actionText="记录反应"
+                onAction={handleAddReaction}
+              />
+            ) : (
+              reactions.map(reaction => (
+                <View key={reaction.id} className={styles.reactionCard}>
+                  <View className={styles.reactionHeader}>
+                    <Text className={styles.reactionDate}>{reaction.date}</Text>
+                    <View
+                      className={classnames(
+                        styles.reactionLevel,
+                        reaction.level === 'mild' && styles.levelMild,
+                        reaction.level === 'moderate' && styles.levelModerate,
+                        reaction.level === 'severe' && styles.levelSevere
+                      )}
+                    >
+                      {reaction.levelLabel}
                     </View>
-                  ))}
+                  </View>
+                  <View className={styles.reactionSymptoms}>
+                    {reaction.symptoms.map((symptom, idx) => (
+                      <View key={idx} className={styles.symptomTag}>
+                        {symptom}
+                      </View>
+                    ))}
+                  </View>
+                  <Text className={styles.reactionDesc}>{reaction.description}</Text>
                 </View>
-                <Text className={styles.reactionDesc}>{reaction.description}</Text>
-              </View>
-            ))}
-            <Button className={styles.addReactionBtn} onClick={handleAddReaction}>
+              ))
+            )}
+            <Button
+              className={styles.addReactionBtn}
+              onClick={handleAddReaction}
+              style={{
+                width: '100%',
+                height: 80,
+                background: 'rgba(139,92,246,0.1)',
+                color: '#8b5cf6',
+                borderRadius: 48,
+                fontWeight: 500,
+                fontSize: 28,
+                border: 'none',
+                marginTop: 16
+              }}
+            >
               + 记录服药反应
             </Button>
           </View>
         )}
       </ScrollView>
+
+      <AddRecordModal
+        visible={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        defaultDate={selectedDate}
+      />
     </View>
   )
 }

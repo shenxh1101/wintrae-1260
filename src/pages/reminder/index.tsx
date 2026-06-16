@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react'
 import { View, Text, ScrollView, Button } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import classnames from 'classnames'
-import { mockReminders, mockCaregivers } from '@/data/mockData'
+import { useAppStore } from '@/store/useAppStore'
+import { mockCaregivers } from '@/data/mockData'
 import EmptyState from '@/components/EmptyState'
+import AddReminderModal from '@/components/AddReminderModal'
 import type { ReminderItem, Caregiver } from '@/types'
 import { getRelativeDateLabel } from '@/utils/date'
 import styles from './index.module.scss'
@@ -11,9 +13,18 @@ import styles from './index.module.scss'
 type FilterType = 'all' | 'medicine' | 'visit' | 'lab' | 'temporary'
 
 const ReminderPage: React.FC = () => {
-  const [reminders, setReminders] = useState<ReminderItem[]>(mockReminders)
+  const reminders = useAppStore(s => s.reminders)
+  const toggleReminder = useAppStore(s => s.toggleReminder)
+  const initStore = useAppStore(s => s.initStore)
+
   const [caregivers] = useState<Caregiver[]>(mockCaregivers)
   const [filterType, setFilterType] = useState<FilterType>('all')
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addType, setAddType] = useState<ReminderItem['type']>('visit')
+
+  useDidShow(() => {
+    initStore()
+  })
 
   const filterOptions = [
     { key: 'all', label: '全部' },
@@ -24,9 +35,7 @@ const ReminderPage: React.FC = () => {
   ]
 
   const filteredReminders = useMemo(() => {
-    if (filterType === 'all') {
-      return reminders
-    }
+    if (filterType === 'all') return reminders
     return reminders.filter(r => r.type === filterType)
   }, [reminders, filterType])
 
@@ -36,6 +45,11 @@ const ReminderPage: React.FC = () => {
       return a.time.localeCompare(b.time)
     })
   }, [filteredReminders])
+
+  const sharedCount = useMemo(
+    () => caregivers.filter(c => c.isShareEnabled).length,
+    [caregivers]
+  )
 
   const getIconClass = (type: string) => {
     switch (type) {
@@ -77,24 +91,26 @@ const ReminderPage: React.FC = () => {
     }
   }
 
-  const handleToggleReminder = (id: string) => {
-    setReminders(prev =>
-      prev.map(r =>
-        r.id === id ? { ...r, isEnabled: !r.isEnabled } : r
-      )
-    )
-  }
-
   const handleAddReminder = () => {
     Taro.showActionSheet({
       itemList: ['用药提醒', '复诊提醒', '化验提醒', '临时加药'],
       success: (res) => {
-        const types = ['medicine', 'visit', 'lab', 'temporary']
-        const type = types[res.tapIndex]
-        console.log('[Reminder] 添加提醒类型:', type)
-        Taro.showToast({ title: '添加功能开发中', icon: 'none' })
+        const types: ReminderItem['type'][] = ['medicine', 'visit', 'lab', 'temporary']
+        setAddType(types[res.tapIndex])
+        setTimeout(() => setShowAddModal(true), 100)
       }
     })
+  }
+
+  const handleToggleReminder = (id: string) => {
+    toggleReminder(id)
+    const reminder = reminders.find(r => r.id === id)
+    if (reminder) {
+      Taro.showToast({
+        title: reminder.isEnabled ? '已关闭提醒' : '已开启提醒',
+        icon: 'none'
+      })
+    }
   }
 
   const handleReminderClick = (reminder: ReminderItem) => {
@@ -108,8 +124,6 @@ const ReminderPage: React.FC = () => {
       icon: 'none'
     })
   }
-
-  const sharedCount = caregivers.filter(c => c.isShareEnabled).length
 
   return (
     <View className={styles.page}>
@@ -135,7 +149,7 @@ const ReminderPage: React.FC = () => {
         {sharedCount > 0 && (
           <View className={styles.shareSection}>
             <Text className={styles.shareTitle}>
-              👨‍👩‍👧 照护人共享
+              👨‍👩‍👧 照护人共享（{sharedCount}位）
             </Text>
             <View className={styles.caregiverList}>
               {caregivers.map(cg => (
@@ -189,6 +203,14 @@ const ReminderPage: React.FC = () => {
                       <View className={classnames(styles.typeBadge, getBadgeClass(reminder.type))}>
                         {reminder.typeLabel}
                       </View>
+                      {!reminder.isEnabled && (
+                        <View
+                          className={styles.typeBadge}
+                          style={{ background: 'rgba(156,163,175,0.1)', color: '#9ca3af' }}
+                        >
+                          已关闭
+                        </View>
+                      )}
                     </View>
                     <Text className={styles.reminderTitle}>{reminder.title}</Text>
                     <View className={styles.reminderTime}>
@@ -210,7 +232,10 @@ const ReminderPage: React.FC = () => {
                 <View className={styles.reminderFooter}>
                   <View className={styles.shareInfo}>
                     <Text className={styles.shareIcon}>👥</Text>
-                    <Text>已共享给 {sharedCount} 位照护人</Text>
+                    <Text>
+                      已共享给 {sharedCount} 位照护人
+                      {reminder.isEnabled ? '' : '（提醒已关闭）'}
+                    </Text>
                   </View>
                   <View
                     className={classnames(
@@ -235,6 +260,12 @@ const ReminderPage: React.FC = () => {
         <Text className={styles.addIcon}>+</Text>
         <Text className={styles.addText}>添加</Text>
       </View>
+
+      <AddReminderModal
+        visible={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        defaultType={addType}
+      />
     </View>
   )
 }
